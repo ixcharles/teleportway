@@ -14,13 +14,8 @@ public class TeleportManager {
         this.config = config;
     }
 
-    public void teleportAsync(Player player, World world, Location location) {
-        Objects.requireNonNull(world).getChunkAtAsync(location).thenRun(() -> {
-            player.sendRichMessage(config.getMessage("teleport-try"));
-
-            boolean success = player.teleport(location);
-            player.sendRichMessage(success ? config.getMessage("teleport-success") : config.getMessage("teleport-fail"));
-        });
+    public void teleportAsync(Player player, Location location) {
+        player.teleportAsync(location).thenAccept(success -> player.sendRichMessage(success ? config.getMessage("teleport-success") : config.getMessage("teleport-fail")));
     }
 
     public void tpSpawn(Player player, Location location) {
@@ -29,11 +24,11 @@ public class TeleportManager {
 
             World world = Bukkit.getWorlds().getFirst();
 
-            teleportAsync(player, world, world.getSpawnLocation());
+            teleportAsync(player, world.getSpawnLocation());
         }
 
         else {
-            teleportAsync(player, location.getWorld(), location);
+            teleportAsync(player, location);
         }
     }
 
@@ -43,7 +38,7 @@ public class TeleportManager {
         }
 
         else {
-            teleportAsync(player, location.getWorld(), location);
+            teleportAsync(player, location);
         }
     }
 }
