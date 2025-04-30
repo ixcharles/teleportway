@@ -15,10 +15,12 @@ import java.util.Objects;
 public class CommandHandler {
     private final ConfigManager config;
     private final DatabaseManager dbManager;
+    private final TeleportManager tpManager;
 
-    public CommandHandler(ConfigManager config, DatabaseManager dbManager) {
+    public CommandHandler(ConfigManager config, DatabaseManager dbManager, TeleportManager tpManager) {
         this.config = config;
         this.dbManager = dbManager;
+        this.tpManager = tpManager;
     }
 
     public void register(Commands commands, JavaPlugin plugin) {
@@ -58,17 +60,11 @@ public class CommandHandler {
 
                                     World world = Bukkit.getWorld("world");
 
-                                    Objects.requireNonNull(world).getChunkAtAsync(world.getSpawnLocation()).thenRun(() -> {
-                                        player.sendRichMessage(config.getMessage("teleport-try"));
-                                        player.teleportAsync(world.getSpawnLocation()).thenAccept(success -> player.sendRichMessage(success ? config.getMessage("teleport-success") : config.getMessage("teleport-fail")));
-                                    });
+                                    tpManager.teleportAsync(player, world, Objects.requireNonNull(world).getSpawnLocation());
                                 }
 
                                 else {
-                                    Objects.requireNonNull(location).getWorld().getChunkAtAsync(location).thenRun(() -> {
-                                        player.sendRichMessage(config.getMessage("teleport-try"));
-                                        player.teleportAsync(location).thenAccept(success -> player.sendRichMessage(success ? config.getMessage("teleport-success") : config.getMessage("teleport-fail")));
-                                    });
+                                    tpManager.teleportAsync(player, location.getWorld(), location);
                                 }
                             });
 

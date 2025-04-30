@@ -18,6 +18,7 @@ public class TeleportWay extends JavaPlugin {
         saveDefaultConfig();
 
         ConfigManager config = new ConfigManager();
+        TeleportManager tpManager = new TeleportManager(config);
         dbManager = new DatabaseManager(this, config);
 
         config.createMessagesFile();
@@ -25,7 +26,7 @@ public class TeleportWay extends JavaPlugin {
         LifecycleEventManager<@NotNull Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            new CommandHandler(config, dbManager).register(commands, this);
+            new CommandHandler(config, dbManager, tpManager).register(commands, this);
         });
 
         getComponentLogger().info(mm.deserialize("<aqua>Plugin successfully enabled</aqua>"));
