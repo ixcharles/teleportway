@@ -2,6 +2,7 @@ package com.umnirium.mc.teleportway;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -27,9 +28,9 @@ public class TeleportManager {
         if (location == null) {
             player.sendRichMessage(config.getMessage("no-spawn"));
 
-            World world = Bukkit.getWorld("world");
+            World world = Bukkit.getWorlds().getFirst();
 
-            teleportAsync(player, world, Objects.requireNonNull(world).getSpawnLocation());
+            teleportAsync(player, world, world.getSpawnLocation());
         }
 
         else {

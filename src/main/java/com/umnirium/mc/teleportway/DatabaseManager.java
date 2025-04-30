@@ -1,6 +1,7 @@
 package com.umnirium.mc.teleportway;
 
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -84,6 +85,29 @@ public class DatabaseManager {
                 plugin.getLogger().severe("Error saving spawn: " + e.getMessage());
 
                 player.sendRichMessage(config.getMessage("setspawn-fail"));
+            }
+        });
+    }
+
+    public void savePlayerSpawnAsync(CommandSender sender, OfflinePlayer target, Location location) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            String sql = "INSERT OR REPLACE INTO player_spawns (uuid, username, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, target.getUniqueId().toString());
+                stmt.setString(2, target.getName());
+                stmt.setString(3, location.getWorld().getName());
+                stmt.setDouble(4, location.getX());
+                stmt.setDouble(5, location.getY());
+                stmt.setDouble(6, location.getZ());
+                stmt.setFloat(7, location.getYaw());
+                stmt.setFloat(8, location.getPitch());
+                stmt.executeUpdate();
+
+                sender.sendRichMessage(config.getMessage("setspawn-success"));
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error saving spawn: " + e.getMessage());
+
+                sender.sendRichMessage(config.getMessage("setspawn-fail"));
             }
         });
     }
