@@ -63,7 +63,7 @@ public class CommandHandler {
                                 return Command.SINGLE_SUCCESS;
                             }
 
-                            dbManager.getPlayerSpawnAsync(player, player.getUniqueId().toString(), player.getName(), location -> tpManager.tpSpawn(player, location));
+                            dbManager.getPlayerSpawnAsync(player, location -> tpManager.tpSpawn(player, location));
 
                             return Command.SINGLE_SUCCESS;
                         })
@@ -80,7 +80,7 @@ public class CommandHandler {
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
-                                            dbManager.getPlayerSpawnAsync(player, target, target, location -> tpManager.tpSpawn(player, location));
+                                            dbManager.getPlayerSpawnAsync(target, location -> tpManager.tpSpawn(player, location, target));
 
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -100,7 +100,7 @@ public class CommandHandler {
                                 return Command.SINGLE_SUCCESS;
                             }
 
-                            dbManager.deletePlayerSpawnAsync(player, player.getUniqueId().toString(), player.getName());
+                            dbManager.deletePlayerSpawnAsync(player);
 
                             return Command.SINGLE_SUCCESS;
                         })
@@ -111,7 +111,7 @@ public class CommandHandler {
                                         .executes(ctx -> {
                                             String target = ctx.getArgument("player", String.class);
 
-                                            dbManager.deletePlayerSpawnAsync(ctx.getSource().getSender(), target, target);
+                                            dbManager.deletePlayerSpawnAsync(ctx.getSource().getSender(), target);
 
                                             return Command.SINGLE_SUCCESS;
                                         })

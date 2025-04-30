@@ -88,12 +88,12 @@ public class DatabaseManager {
         });
     }
 
-    public void getPlayerSpawnAsync(CommandSender sender, String playerUUID, String playerName, Consumer<Location> callback) {
+    public void getPlayerSpawnAsync(Player player, Consumer<Location> callback) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             String sql = "SELECT world, x, y, z, yaw, pitch FROM player_spawns WHERE uuid = ? OR username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, playerUUID);
-                stmt.setString(2, playerName);
+                stmt.setString(1, player.getUniqueId().toString());
+                stmt.setString(2, player.getName());
 
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
@@ -108,8 +108,6 @@ public class DatabaseManager {
 
                     plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(loc));
                 } else {
-                    sender.sendRichMessage("Not found");
-
                     plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(null));
                 }
             } catch (SQLException e) {
@@ -119,16 +117,68 @@ public class DatabaseManager {
         });
     }
 
-    public void deletePlayerSpawnAsync(CommandSender sender, String playerUUID, String playerName) {
+    public void getPlayerSpawnAsync(String target, Consumer<Location> callback) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            String sql = "SELECT world, x, y, z, yaw, pitch FROM player_spawns WHERE uuid = ? OR username = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, target);
+                stmt.setString(2, target);
+
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    Location loc = new Location(
+                            plugin.getServer().getWorld(rs.getString("world")),
+                            rs.getDouble("x"),
+                            rs.getDouble("y"),
+                            rs.getDouble("z"),
+                            rs.getFloat("yaw"),
+                            rs.getFloat("pitch")
+                    );
+
+                    plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(loc));
+                } else {
+                    plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(null));
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error retrieving spawn: " + e.getMessage());
+                plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(null));
+            }
+        });
+    }
+
+    public void deletePlayerSpawnAsync(Player player) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             String sql = "DELETE FROM player_spawns WHERE uuid = ? OR username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, playerUUID);
-                stmt.setString(2, playerName);
+                stmt.setString(1, player.getUniqueId().toString());
+                stmt.setString(2, player.getName());
                 int deleted = stmt.executeUpdate();
 
                 if (deleted == 0) {
-                    sender.sendRichMessage("Not found");
+                    player.sendRichMessage(config.getMessage("no-spawn"));
+                }
+
+                else {
+                    player.sendRichMessage(config.getMessage("delspawn-success"));
+                }
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error deleting spawn: " + e.getMessage());
+
+                player.sendRichMessage(config.getMessage("delspawn-fail"));
+            }
+        });
+    }
+
+    public void deletePlayerSpawnAsync(CommandSender sender, String target) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            String sql = "DELETE FROM player_spawns WHERE uuid = ? OR username = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, target);
+                stmt.setString(2, target);
+                int deleted = stmt.executeUpdate();
+
+                if (deleted == 0) {
+                    sender.sendRichMessage(config.getMessage("no-spawn-others").replace("%player%", target));
                 }
 
                 else {

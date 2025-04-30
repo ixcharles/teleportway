@@ -3,7 +3,8 @@
 no-console: "<aqua>[Frostbite]</aqua> <red>Only players are allowed to use this command.</red>"
 
 # Spawn messages
-no-spawn: "<red>No spawn found! Set to default one.</red>"
+no-spawn: "<red>No spawn found!</red>"
+no-spawn-others: "<red>No spawn found for %player% !</red>"
 setspawn-success: "<green>Spawn set successfully</green>"
 setspawn-fail: "<red>Error saving spawn...</red>"
 delspawn-success: "<green>Spawn deleted successfully</green>"

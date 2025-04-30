@@ -36,4 +36,14 @@ public class TeleportManager {
             teleportAsync(player, location.getWorld(), location);
         }
     }
+
+    public void tpSpawn(Player player, Location location, String target) {
+        if (location == null) {
+            player.sendRichMessage(config.getMessage("no-spawn-others").replace("%player%", target));
+        }
+
+        else {
+            teleportAsync(player, location.getWorld(), location);
+        }
+    }
 }
