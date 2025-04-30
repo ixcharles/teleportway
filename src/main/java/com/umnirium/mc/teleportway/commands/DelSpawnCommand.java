@@ -43,6 +43,7 @@ public class DelSpawnCommand {
                             }
 
                             dbManager.deletePlayerSpawnAsync(player);
+                            player.setRespawnLocation(null, false);
 
                             return Command.SINGLE_SUCCESS;
                         })

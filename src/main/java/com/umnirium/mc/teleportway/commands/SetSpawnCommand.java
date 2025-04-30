@@ -48,6 +48,7 @@ public class SetSpawnCommand {
                             Location location = player.getLocation();
 
                             dbManager.savePlayerSpawnAsync(player, location);
+                            player.setRespawnLocation(location, true);
 
                             return Command.SINGLE_SUCCESS;
                         })
@@ -75,6 +76,7 @@ public class SetSpawnCommand {
                                                                             );
 
                                                                             dbManager.savePlayerSpawnAsync(player, location);
+                                                                            player.setRespawnLocation(location, true);
 
                                                                             return Command.SINGLE_SUCCESS;
                                                                         })
