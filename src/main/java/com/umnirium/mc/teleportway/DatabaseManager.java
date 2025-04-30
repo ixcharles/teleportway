@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.sql.*;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 public class DatabaseManager {
