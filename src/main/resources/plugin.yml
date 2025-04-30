@@ -12,6 +12,25 @@ permissions:
       teleportway.command.setspawn: true
       teleportway.command.spawn.*: true
       teleportway.command.delspawn.*: true
+  teleportway.command.setspawn.*:
+    description: Gives access to all setspawn command
+    children:
+      teleportway.command.setspawn: true
+      teleportway.command.setspawn.position: true
+      teleportway.command.setspawn.others: true
+      teleportway.command.setspawn.others.position: true
+  teleportway.command.setspawn:
+    description: Set custom spawn
+    default: op
+  teleportway.command.setspawn.position:
+    description: Set custom spawn with specified coordinates
+    default: op
+  teleportway.command.setspawn.others:
+    description: Set custom spawn to other players
+    default: op
+  teleportway.command.setspawn.others.position:
+    description: Set custom spawn for others with specified coordinates
+    default: op
   teleportway.command.spawn.*:
     description: Gives access to all spawn command
     children:
@@ -33,7 +52,4 @@ permissions:
     default: op
   teleportway.command.delspawn.others:
     description: Delete other player spawn
-    default: op
-  teleportway.command.setspawn:
-    description: Set custom spawn
     default: op
