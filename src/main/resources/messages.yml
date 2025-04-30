@@ -1,0 +1,7 @@
+no-console: "<aqua>[Frostbite]</aqua> <red>Only players are allowed to use this command.</red>"
+no-spawn: "<red>No spawn found! Set to default one.</red>"
+setspawn-success: "<green>Spawn set successfully</green>"
+setspawn-fail: "<red>Error saving spawn...</red>"
+teleport-try: "<yellow>Teleporting...</yellow>"
+teleport-success: "<green>Teleported successfully</green>"
+teleport-fail: "<red>Teleportation failed</red>"

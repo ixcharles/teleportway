@@ -1,19 +1,41 @@
 package com.umnirium.mc.teleportway;
 
+import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("UnstableApiUsage")
 public class TeleportWay extends JavaPlugin {
     MiniMessage mm = MiniMessage.miniMessage();
+    private DatabaseManager dbManager;
 
     @Override
     public void onEnable() {
-        getComponentLogger().info(mm.deserialize("<aqua>[WayGate]</aqua> <white>Plugin successfully enabled</white>"));
-        getComponentLogger().info(mm.deserialize("<aqua>[WayGate]</aqua> <white>Consider supporting here:</white> <yellow><click:open_url:'https://ko-fi.com/H2H61DN2C9'>https://ko-fi.com/H2H61DN2C9</click></yellow>"));
+        saveDefaultConfig();
+
+        ConfigManager config = new ConfigManager();
+        dbManager = new DatabaseManager(this, config);
+
+        config.createMessagesFile();
+
+        LifecycleEventManager<@NotNull Plugin> manager = this.getLifecycleManager();
+        manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            final Commands commands = event.registrar();
+            new CommandHandler(config, dbManager).register(commands, this);
+        });
+
+        getComponentLogger().info(mm.deserialize("<aqua>Plugin successfully enabled</aqua>"));
+        getComponentLogger().info(mm.deserialize("<white>Consider supporting here:</white> <yellow><click:open_url:'https://ko-fi.com/H2H61DN2C9'>https://ko-fi.com/H2H61DN2C9</click></yellow>"));
     }
 
     @Override
     public void onDisable() {
-        getComponentLogger().info(mm.deserialize("<aqua>[WayGate]</aqua> <white>Plugin successfully disabled</white>"));
+        dbManager.closeConnection();
+
+        getComponentLogger().info(mm.deserialize("<aqua>Plugin successfully disabled</aqua>"));
     }
 }

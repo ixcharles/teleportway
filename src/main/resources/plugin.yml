@@ -5,3 +5,15 @@ description: TeleportWay is the ultimate teleportation and spawn management solu
 author: ixcharles
 website: https://github.com/ixcharles
 api-version: '1.21.5'
+permissions:
+  teleportway.command.*:
+    description: Gives access to all TeleportWay commands
+    children:
+      teleportway.command.setspawn: true
+      teleportway.command.spawn: true
+  teleportway.command.setspawn:
+    description: Set custom spawn
+    default: op
+  teleportway.command.spawn:
+    description: Teleport to spawn
+    default: true
