@@ -30,7 +30,7 @@ tasks {
     }
 
     shadowJar {
-        relocate("org.sqlite", "com.umnirium.mc.waygate.sqlite")
+        relocate("org.sqlite", "com.umnirium.mc.teleportway.sqlite")
 
         archiveFileName.set("${project.name}-${project.version}.jar")
     }
