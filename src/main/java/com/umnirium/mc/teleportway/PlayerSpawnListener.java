@@ -17,7 +17,11 @@ public class PlayerSpawnListener implements Listener {
     public void onPlayerSpawn(PlayerSpawnLocationEvent event) {
         Player player = event.getPlayer();
 
-        dbManager.getPlayerSpawnAsync(player, location -> player.setRespawnLocation(location, true));
+        dbManager.getPlayerSpawnAsync(player, location -> {
+            if (location != null) {
+                player.setRespawnLocation(location, true);
+            }
+        });
     }
 
     @EventHandler
