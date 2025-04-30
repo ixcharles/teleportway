@@ -11,9 +11,13 @@ permissions:
     children:
       teleportway.command.setspawn: true
       teleportway.command.spawn: true
+      teleportway.command.delspawn: true
   teleportway.command.setspawn:
     description: Set custom spawn
     default: op
   teleportway.command.spawn:
     description: Teleport to spawn
-    default: true
+    default: op
+  teleportway.command.delspawn:
+    description: Delete spawn
+    default: op

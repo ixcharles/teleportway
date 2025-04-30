@@ -110,4 +110,20 @@ public class DatabaseManager {
             }
         });
     }
+
+    public void deletePlayerSpawnAsync(Player player) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            String sql = "DELETE FROM player_spawns WHERE uuid = ?";
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, player.getUniqueId().toString());
+                stmt.executeUpdate();
+
+                player.sendRichMessage(config.getMessage("delspawn-success"));
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Error deleting spawn: " + e.getMessage());
+
+                player.sendRichMessage(config.getMessage("delspawn-fail"));
+            }
+        });
+    }
 }

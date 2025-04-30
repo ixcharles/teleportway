@@ -77,5 +77,23 @@ public class CommandHandler {
                 "Teleport to spawn",
                 List.of("tspawn", "twspawn", "wayspawn")
         );
+
+        commands.register(
+                Commands.literal("delspawn")
+                        .requires(source -> source.getSender().hasPermission("teleportway.command.delspawn"))
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getSender() instanceof Player player)) {
+                                ctx.getSource().getSender().sendRichMessage(config.getMessage("no-console"));
+
+                                return Command.SINGLE_SUCCESS;
+                            }
+
+                            dbManager.deletePlayerSpawnAsync(player);
+
+                            return Command.SINGLE_SUCCESS;
+                        }).build(),
+                "Deletes spawn",
+                List.of("tdelspawn", "twdelspawn", "waydelspawn")
+        );
     }
 }
