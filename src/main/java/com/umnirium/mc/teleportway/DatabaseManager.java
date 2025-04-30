@@ -1,10 +1,12 @@
 package com.umnirium.mc.teleportway;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.sql.*;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public class DatabaseManager {
@@ -40,11 +42,12 @@ public class DatabaseManager {
     private void createTable() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS player_spawns (" +
                 "uuid TEXT PRIMARY KEY, " +
+                "username TEXT, " +
                 "world TEXT NOT NULL, " +
                 "x DOUBLE NOT NULL, " +
                 "y DOUBLE NOT NULL, " +
-                "z DOUBLE NOT NULL," +
-                "yaw FLOAT NOT NULL," +
+                "z DOUBLE NOT NULL, " +
+                "yaw FLOAT NOT NULL, " +
                 "pitch FLOAT NOT NULL" +
                 ")";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -65,15 +68,16 @@ public class DatabaseManager {
 
     public void savePlayerSpawnAsync(Player player, Location location) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            String sql = "INSERT OR REPLACE INTO player_spawns (uuid, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT OR REPLACE INTO player_spawns (uuid, username, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, player.getUniqueId().toString());
-                stmt.setString(2, location.getWorld().getName());
-                stmt.setDouble(3, location.getX());
-                stmt.setDouble(4, location.getY());
-                stmt.setDouble(5, location.getZ());
-                stmt.setFloat(6, location.getYaw());
-                stmt.setFloat(7, location.getPitch());
+                stmt.setString(2, player.getName());
+                stmt.setString(3, location.getWorld().getName());
+                stmt.setDouble(4, location.getX());
+                stmt.setDouble(5, location.getY());
+                stmt.setDouble(6, location.getZ());
+                stmt.setFloat(7, location.getYaw());
+                stmt.setFloat(8, location.getPitch());
                 stmt.executeUpdate();
 
                 player.sendRichMessage(config.getMessage("setspawn-success"));
@@ -111,18 +115,19 @@ public class DatabaseManager {
         });
     }
 
-    public void deletePlayerSpawnAsync(Player player) {
+    public void deletePlayerSpawnAsync(CommandSender sender, String playerUUID, String playerName) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            String sql = "DELETE FROM player_spawns WHERE uuid = ?";
+            String sql = "DELETE FROM player_spawns WHERE uuid = ? OR username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, player.getUniqueId().toString());
+                stmt.setString(1, playerUUID);
+                stmt.setString(2, playerName);
                 stmt.executeUpdate();
 
-                player.sendRichMessage(config.getMessage("delspawn-success"));
+                sender.sendRichMessage(config.getMessage("delspawn-success"));
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error deleting spawn: " + e.getMessage());
 
-                player.sendRichMessage(config.getMessage("delspawn-fail"));
+                sender.sendRichMessage(config.getMessage("delspawn-fail"));
             }
         });
     }
