@@ -10,7 +10,23 @@ TeleportWay is the ultimate teleportation and spawn management solution for Mine
 
 ## Features
 
-- To be added.
+### 🛏️ Personalized Spawn Management
+Give your players full control over their journey! With TeleportWay, players can effortlessly set their personal spawn point anywhere in the world — be it a cozy cabin, a fortified base, or a secret mountain hideaway.
+
+- Instantly teleport back to your custom spawn with a simple command.
+
+- Changed your mind? Players can easily delete or update their spawn location at any time.
+
+### ⚡ Optimized for Peak Performance
+TeleportWay is built with server performance as a top priority.
+
+- Teleports are handled asynchronously, ensuring no lag spikes or TPS drops — even during heavy player activity.
+
+- Lightweight and Paper-optimized, it's designed to run flawlessly on any size server, from small communities to massive multiplayer hubs.
+
+## Wiki
+
+For more informoation about configuration, commands and permissions, check here: https://github.com/ixcharles/teleportway/wiki
 
 ## Join our Discord server
 
