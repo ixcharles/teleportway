@@ -1,5 +1,8 @@
 package com.umnirium.mc.teleportway;
 
+import com.umnirium.mc.teleportway.commands.DelSpawnCommand;
+import com.umnirium.mc.teleportway.commands.SetSpawnCommand;
+import com.umnirium.mc.teleportway.commands.SpawnCommand;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -26,7 +29,9 @@ public class TeleportWay extends JavaPlugin {
         LifecycleEventManager<@NotNull Plugin> manager = this.getLifecycleManager();
         manager.registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             final Commands commands = event.registrar();
-            new CommandHandler(config, dbManager, tpManager).register(commands, this);
+            new DelSpawnCommand(config, dbManager).register(commands, this);
+            new SetSpawnCommand(config, dbManager).register(commands, this);
+            new SpawnCommand(config, dbManager, tpManager).register(commands, this);
         });
 
         getComponentLogger().info(mm.deserialize("<aqua>Plugin successfully enabled</aqua>"));
