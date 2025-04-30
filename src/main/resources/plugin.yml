@@ -1,5 +1,5 @@
 name: TeleportWay
-version: '0.2.0'
+version: '0.1.0'
 main: com.umnirium.mc.teleportway.TeleportWay
 description: TeleportWay is the ultimate teleportation and spawn management solution for Minecraft servers.
 author: ixcharles
