@@ -65,22 +65,29 @@ public class CommandHandler {
                                 return Command.SINGLE_SUCCESS;
                             }
 
-                            dbManager.getPlayerSpawnAsync(player, location ->  {
-                                if (location == null) {
-                                    player.sendRichMessage(config.getMessage("no-spawn"));
-
-                                    World world = Bukkit.getWorld("world");
-
-                                    tpManager.teleportAsync(player, world, Objects.requireNonNull(world).getSpawnLocation());
-                                }
-
-                                else {
-                                    tpManager.teleportAsync(player, location.getWorld(), location);
-                                }
-                            });
+                            dbManager.getPlayerSpawnAsync(player, player.getUniqueId().toString(), player.getName(), location -> tpManager.tpSpawn(player, location));
 
                             return Command.SINGLE_SUCCESS;
-                        }).build(),
+                        })
+                        .then(
+                                Commands.argument("player", StringArgumentType.word())
+                                        .suggests(playerSuggestions)
+                                        .requires(source -> source.getSender().hasPermission("teleportway.command.spawn.others"))
+                                        .executes(ctx -> {
+                                            String target = ctx.getArgument("player", String.class);
+
+                                            if (!(ctx.getSource().getSender() instanceof Player player)) {
+                                                ctx.getSource().getSender().sendRichMessage(config.getMessage("no-console"));
+
+                                                return Command.SINGLE_SUCCESS;
+                                            }
+
+                                            dbManager.getPlayerSpawnAsync(player, target, target, location -> tpManager.tpSpawn(player, location));
+
+                                            return Command.SINGLE_SUCCESS;
+                                        })
+                        )
+                        .build(),
                 "Teleport to spawn",
                 List.of("tspawn", "twspawn", "wayspawn")
         );

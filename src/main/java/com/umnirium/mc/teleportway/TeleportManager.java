@@ -1,5 +1,6 @@
 package com.umnirium.mc.teleportway;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -20,5 +21,19 @@ public class TeleportManager {
             boolean success = player.teleport(location);
             player.sendRichMessage(success ? config.getMessage("teleport-success") : config.getMessage("teleport-fail"));
         });
+    }
+
+    public void tpSpawn(Player player, Location location) {
+        if (location == null) {
+            player.sendRichMessage(config.getMessage("no-spawn"));
+
+            World world = Bukkit.getWorld("world");
+
+            teleportAsync(player, world, Objects.requireNonNull(world).getSpawnLocation());
+        }
+
+        else {
+            teleportAsync(player, location.getWorld(), location);
+        }
     }
 }

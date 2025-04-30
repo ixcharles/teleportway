@@ -89,11 +89,13 @@ public class DatabaseManager {
         });
     }
 
-    public void getPlayerSpawnAsync(Player player, Consumer<Location> callback) {
+    public void getPlayerSpawnAsync(CommandSender sender, String playerUUID, String playerName, Consumer<Location> callback) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            String sql = "SELECT world, x, y, z, yaw, pitch FROM player_spawns WHERE uuid = ?";
+            String sql = "SELECT world, x, y, z, yaw, pitch FROM player_spawns WHERE uuid = ? OR username = ?";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setString(1, player.getUniqueId().toString());
+                stmt.setString(1, playerUUID);
+                stmt.setString(2, playerName);
+
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     Location loc = new Location(
@@ -104,8 +106,11 @@ public class DatabaseManager {
                             rs.getFloat("yaw"),
                             rs.getFloat("pitch")
                     );
+
                     plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(loc));
                 } else {
+                    sender.sendRichMessage("Not found");
+
                     plugin.getServer().getScheduler().runTask(plugin, () -> callback.accept(null));
                 }
             } catch (SQLException e) {
@@ -121,9 +126,15 @@ public class DatabaseManager {
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, playerUUID);
                 stmt.setString(2, playerName);
-                stmt.executeUpdate();
+                int deleted = stmt.executeUpdate();
 
-                sender.sendRichMessage(config.getMessage("delspawn-success"));
+                if (deleted == 0) {
+                    sender.sendRichMessage("Not found");
+                }
+
+                else {
+                    sender.sendRichMessage(config.getMessage("delspawn-success"));
+                }
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error deleting spawn: " + e.getMessage());
 
